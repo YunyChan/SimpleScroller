@@ -58,7 +58,7 @@
         this.wrap = oDoc.createElement('ul');
         this.wrap.innerHTML = this.createItems();
         this.baseStyle = 'position: absolute; left: 0;';
-        this.wrap.style = this.baseStyle;
+        this.wrap.setAttribute('style', this.baseStyle);
 
         this.target.style.height = this.height + 'px';
         this.target.style.position = 'relative';
@@ -85,10 +85,10 @@
         var nTotalHeight = 0;
         for(var cnt = 0, length = oLis.length; cnt < length; cnt ++){
             var oLi = oLis[cnt];
-            if(oLi.clientWidth > nCurrentMaxWidth){
-                nCurrentMaxWidth = oLi.clientWidth;
+            if(oLi.offsetWidth > nCurrentMaxWidth){
+                nCurrentMaxWidth = oLi.offsetWidth;
             }
-            nTotalHeight += oLi.clientHeight;
+            nTotalHeight += oLi.offsetHeight;
         }
 
         this.header = oLis[0];
@@ -103,7 +103,7 @@
     function fSetWrapWidthAndHeight(oParams) {
         this.baseStyle += 'width: ' + oParams.width + 'px;';
         this.baseStyle += 'height: ' + oParams.height + 'px;';
-        this.wrap.style.width = this.baseStyle;
+        this.wrap.setAttribute('style', this.baseStyle);
         this.target.style.width = oParams.width + 'px';
     }
 
@@ -113,7 +113,7 @@
         }else{
             this.baseStyle += 'top: 0px;';
         }
-        this.wrap.style = this.baseStyle;
+        this.wrap.setAttribute('style', this.baseStyle);
     }
     
     function fRun() {
@@ -154,7 +154,7 @@
 
     function fOnAnimationFinish() {
         this.wrap.setAttribute('style', this.baseStyle);
-        var oItems = this.wrap.querySelectorAll('li');
+        var oItems = this.wrap.getElementsByTagName('li');
         var oFirstItem = this.wrap.removeChild(oItems[0]);
         this.wrap.appendChild(oFirstItem);
     }
