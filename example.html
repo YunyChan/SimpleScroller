@@ -4,15 +4,43 @@
     <meta charset="UTF-8">
     <title>SimpleScroller Example</title>
     <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
 <div id="scroller"></div>
 <script src="src/SimpleScroller.js"></script>
 <script>
+    var oData = [{
+        name: 'test1',
+        age: 15
+    }, {
+        name: 'test2',
+        age: 20
+    }, {
+        name: 'test3',
+        age: 25
+    }, {
+        name: 'test4',
+        age: 30
+    }, {
+        name: 'test5',
+        age: 35
+    }
+    ];
     var oScroller = new SimpleScroller({
-        target: document.getElementById('scroller')
+        target: document.getElementById('scroller'),
+        height: 50,
+        scrollHeight: 18,
+        data: oData,
+        item: function(nIndex, oData){
+            return 'Name：' + oData.name + ' & Age:' + oData.age + '.';
+        }
     });
+    oScroller.run();
 </script>
 </body>
 </html>

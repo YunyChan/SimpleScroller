@@ -22,10 +22,25 @@
     SimpleScroller.prototype.init = fInit;
     SimpleScroller.prototype.initEvents = fInitEvents;
     SimpleScroller.prototype.render = fRender;
+    SimpleScroller.prototype.createItems = fCreateItems;
+    SimpleScroller.prototype.getItemsWidthAndHeight = fGetItemsWidthAndHeight;
+    SimpleScroller.prototype.setWrapWidthAndHeight = fSetWrapWidthAndHeight;
+    SimpleScroller.prototype.setStartPosition = fSetStartPosition;
+    SimpleScroller.prototype.run = fRun;
+    SimpleScroller.prototype.stop = fStop;
+    SimpleScroller.prototype.onUpdate = fOnUpdate;
+    SimpleScroller.prototype.scroll = fScroll;
+    SimpleScroller.prototype.onAnimationFinish = fOnAnimationFinish;
 
     function fConstructor(oConf){
         this.config =  oConf = oConf || {};
         this.target = oConf.target;
+        this.height = oConf.height;
+        this.scrollHeight = oConf.scrollHeight;
+        this.data = oConf.data || [];
+        this.item = oConf.item || '';
+        this.interval = oConf.interval || 4000;
+        this.fromOutside = oConf.fromOutside;
         this.init();
         return this;
     }
@@ -40,9 +55,109 @@
     }
 
     function fRender() {
-        this.renderDOM();
+        this.wrap = oDoc.createElement('ul');
+        this.wrap.innerHTML = this.createItems();
+        this.baseStyle = 'position: absolute; left: 0;';
+        this.wrap.style = this.baseStyle;
+
+        this.target.style.height = this.height + 'px';
+        this.target.style.position = 'relative';
+        this.target.style.overflow = 'hidden';
+        this.target.appendChild(this.wrap);
+
+        var oItemsWithAndHeight = this.getItemsWidthAndHeight();
+        this.setWrapWidthAndHeight(oItemsWithAndHeight);
+        this.setStartPosition();
     }
     
+    function fCreateItems() {
+        var sItemsHTML = '';
+        for(var cnt = 0, length = this.data.length; cnt < length; cnt++){
+            var oData = this.data[cnt];
+            sItemsHTML += '<li>' + this.item(cnt, oData) + '</li>';
+        }
+        return sItemsHTML;
+    }
+
+    function fGetItemsWidthAndHeight() {
+        var oLis = this.target.getElementsByTagName('li');
+        var nCurrentMaxWidth = 0;
+        var nTotalHeight = 0;
+        for(var cnt = 0, length = oLis.length; cnt < length; cnt ++){
+            var oLi = oLis[cnt];
+            if(oLi.clientWidth > nCurrentMaxWidth){
+                nCurrentMaxWidth = oLi.clientWidth;
+            }
+            nTotalHeight += oLi.clientHeight;
+        }
+
+        this.header = oLis[0];
+        this.last = oLis[oLis.length - 1];
+
+        return {
+            width: nCurrentMaxWidth,
+            height: nTotalHeight
+        }
+    }
+
+    function fSetWrapWidthAndHeight(oParams) {
+        this.baseStyle += 'width: ' + oParams.width + 'px;';
+        this.baseStyle += 'height: ' + oParams.height + 'px;';
+        this.wrap.style.width = this.baseStyle;
+        this.target.style.width = oParams.width + 'px';
+    }
+
+    function fSetStartPosition() {
+        if(this.fromOutside){
+            this.baseStyle += 'top: ' + this.height + 'px;';
+        }else{
+            this.baseStyle += 'top: 0px;';
+        }
+        this.wrap.style = this.baseStyle;
+    }
+    
+    function fRun() {
+        var that = this;
+        if(this.data.length > 0){
+            this.intervalID = setInterval(function(){
+                that.onUpdate();
+            }, this.interval);
+        }
+        return this;
+    }
+    
+    function fStop() {
+        if(this.data.length > 0){
+            clearInterval(this.intervalID);
+        }
+        return this;
+    }
+    
+    function fOnUpdate() {
+        var that = this;
+        this.scroll(this.scrollHeight);
+        setTimeout(function () {
+            that.onAnimationFinish();
+        }, 1000);
+    }
+
+    function fScroll(nHeight) {
+        var sRawTransition = 'transition: top 1s ease-in;';
+        var sTransition = '';
+        var aPrefix = ['', '-moz-', '-webkit-', '-o-'];
+        for(var cnt = 0, length = aPrefix.length; cnt < length; cnt ++){
+            sTransition += aPrefix[cnt] + sRawTransition;
+        }
+        this.wrap.setAttribute('style', this.baseStyle + sTransition);
+        this.wrap.style.top = -nHeight + 'px';
+    }
+
+    function fOnAnimationFinish() {
+        this.wrap.setAttribute('style', this.baseStyle);
+        var oItems = this.wrap.querySelectorAll('li');
+        var oFirstItem = this.wrap.removeChild(oItems[0]);
+        this.wrap.appendChild(oFirstItem);
+    }
 
     if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
         define(function() {
