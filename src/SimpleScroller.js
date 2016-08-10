@@ -40,6 +40,12 @@
         this.data = oConf.data || [];
         this.item = oConf.item || '';
         this.interval = oConf.interval || 4000;
+        this.animationDuration = oConf.animationDuration || 1000;
+        if(this.animationDuration > this.interval){
+            this.animationDuration = this.animationDuration + this.interval;
+            this.interval = this.animationDuration - this.interval;
+            this.animationDuration = this.animationDuration - this.interval;
+        }
         this.fromOutside = oConf.fromOutside;
         this.init();
         return this;
@@ -138,7 +144,7 @@
         this.scroll(this.scrollHeight);
         setTimeout(function () {
             that.onAnimationFinish();
-        }, 1000);
+        }, this.animationDuration);
     }
 
     function fScroll(nHeight) {
