@@ -46,6 +46,7 @@
             this.interval = this.animationDuration - this.interval;
             this.animationDuration = this.animationDuration - this.interval;
         }
+        this.isAnimationDisable = /MSIE [6-9]]/.test(window.navigator.userAgent);
         this.fromOutside = oConf.fromOutside;
         this.init();
         return this;
@@ -142,9 +143,13 @@
     function fOnUpdate() {
         var that = this;
         this.scroll(this.scrollHeight);
-        setTimeout(function () {
-            that.onAnimationFinish();
-        }, this.animationDuration);
+        if(this.isAnimationDisable){
+            this.onAnimationFinish();
+        }else{
+            setTimeout(function () {
+                that.onAnimationFinish();
+            }, this.animationDuration);
+        }
     }
 
     function fScroll(nHeight) {
