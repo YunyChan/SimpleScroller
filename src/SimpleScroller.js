@@ -37,6 +37,7 @@
         this.target = oConf.target;
         this.height = oConf.height;
         this.scrollHeight = oConf.scrollHeight;
+        this.unit = oConf.unit || 'px';
         this.data = oConf.data || [];
         this.item = oConf.item || '';
         this.interval = oConf.interval || 4000;
@@ -67,7 +68,7 @@
         this.baseStyle = 'position: absolute; left: 0;';
         this.wrap.setAttribute('style', this.baseStyle);
 
-        this.target.style.height = this.height + 'px';
+        this.target.style.height = this.height + this.unit;
         this.target.style.position = 'relative';
         this.target.style.overflow = 'hidden';
         this.target.appendChild(this.wrap);
@@ -100,7 +101,6 @@
 
         this.header = oLis[0];
         this.last = oLis[oLis.length - 1];
-
         return {
             width: nCurrentMaxWidth,
             height: nTotalHeight
@@ -108,7 +108,7 @@
     }
 
     function fSetWrapWidthAndHeight(oParams) {
-        this.baseStyle += 'width: ' + oParams.width + 'px;';
+        this.baseStyle += 'width: ' + (oParams.width + 1) + 'px;';
         this.baseStyle += 'height: ' + oParams.height + 'px;';
         this.wrap.setAttribute('style', this.baseStyle);
         this.target.style.width = oParams.width + 'px';
@@ -116,9 +116,9 @@
 
     function fSetStartPosition() {
         if(this.fromOutside){
-            this.baseStyle += 'top: ' + this.height + 'px;';
+            this.baseStyle += 'top: ' + this.height + this.unit + ';';
         }else{
-            this.baseStyle += 'top: 0px;';
+            this.baseStyle += 'top: 0;';
         }
         this.wrap.setAttribute('style', this.baseStyle);
     }
@@ -160,7 +160,7 @@
             sTransition += aPrefix[cnt] + sRawTransition;
         }
         this.wrap.setAttribute('style', this.baseStyle + sTransition);
-        this.wrap.style.top = -nHeight + 'px';
+        this.wrap.style.top = -nHeight + this.unit;
     }
 
     function fOnAnimationFinish() {
