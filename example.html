@@ -35,14 +35,14 @@
     }
     ];
     var oScroller = new SimpleScroller({
-        target: document.getElementById('scroller'),
         height: 50,
         scrollHeight: 18,
         data: oData,
         item: function(nIndex, oData){
             return 'Name：' + oData.name + ' & Age:' + oData.age + '.';
         }
-    });
+    }).render(document.getElementById('scroller'));
+
     oScroller.run();
 </script>
 </body>

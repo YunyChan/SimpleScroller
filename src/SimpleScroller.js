@@ -34,12 +34,12 @@
 
     function fConstructor(oConf){
         this.config =  oConf = oConf || {};
-        this.target = oConf.target;
         this.height = oConf.height;
-        this.scrollHeight = oConf.scrollHeight;
+        this.scrollHeight = oConf.scrollHeight || oConf.height;
         this.unit = oConf.unit || 'px';
         this.data = oConf.data || [];
         this.item = oConf.item || '';
+        
         this.interval = oConf.interval || 4000;
         this.animationDuration = oConf.animationDuration || 1000;
         if(this.animationDuration > this.interval){
@@ -48,13 +48,12 @@
             this.animationDuration = this.animationDuration - this.interval;
         }
         this.isAnimationDisable = /MSIE [6-9]]/.test(window.navigator.userAgent);
-        this.fromOutside = oConf.fromOutside;
+        
         this.init();
         return this;
     }
 
     function fInit(){
-        this.render();
         this.initEvents();
     }
 
@@ -62,11 +61,12 @@
         var that = this;
     }
 
-    function fRender() {
+    function fRender(oTarget) {
+        this.target = oTarget;
+
         this.wrap = oDoc.createElement('ul');
         this.wrap.innerHTML = this.createItems();
         this.baseStyle = 'position: absolute; left: 0;';
-        this.wrap.setAttribute('style', this.baseStyle);
 
         this.target.style.height = this.height + this.unit;
         this.target.style.position = 'relative';
@@ -76,6 +76,7 @@
         var oItemsWithAndHeight = this.getItemsWidthAndHeight();
         this.setWrapWidthAndHeight(oItemsWithAndHeight);
         this.setStartPosition();
+        return this;
     }
     
     function fCreateItems() {
@@ -102,24 +103,20 @@
         this.header = oLis[0];
         this.last = oLis[oLis.length - 1];
         return {
-            width: nCurrentMaxWidth,
+            width: nCurrentMaxWidth + 1, // +1 是用于修正被末位舍弃的尾数
             height: nTotalHeight
         }
     }
 
     function fSetWrapWidthAndHeight(oParams) {
-        this.baseStyle += 'width: ' + (oParams.width + 1) + 'px;';
+        this.baseStyle += 'width: ' + oParams.width + 'px;';
         this.baseStyle += 'height: ' + oParams.height + 'px;';
-        this.wrap.setAttribute('style', this.baseStyle);
+
         this.target.style.width = oParams.width + 'px';
     }
 
     function fSetStartPosition() {
-        if(this.fromOutside){
-            this.baseStyle += 'top: ' + this.height + this.unit + ';';
-        }else{
-            this.baseStyle += 'top: 0;';
-        }
+        this.baseStyle += 'top: 0;';
         this.wrap.setAttribute('style', this.baseStyle);
     }
     
