@@ -55,8 +55,8 @@
 + `height` - __必须__, 视窗高度
 + `scrollHeight` - __必须__, 滚动高度
 + `unit` - _default: px_, 样式单位px/rem
-+ `data` - _必须_, 数据源
-+ `item` - _必须_, 每项模板
++ `data` - __必须__, 数据源
++ `item` - __必须__, 每项模板
 + `interval` - _default: 4000_, 轮播间隔（单位ms）
 + `animationDuration` - _default: 1000_, 动画时长（单位ms）
 
